@@ -8,16 +8,10 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"wizards/house"
 )
 
-type house struct {
-	HouseID *int `json:"house_id,omitempty"`
-	Name string `json:"house_name,omitempty"`
-	Founder string `json:"founder,omitempty"`
-	Animal string `json:"animal,omitempty"`
-}
-
-var houses []house
+var houses []house.House
 
 func init(){
 housesJSON, _ := ioutil.ReadFile("houses.json")
@@ -61,7 +55,7 @@ func handleHouses(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		bodyBytes, err := ioutil.ReadAll(r.Body)
 
-		var newHouse house
+		var newHouse house.House
 
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -121,7 +115,7 @@ func handleHouse(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	// GET
 	case http.MethodGet:
-		var retrievedHouse house
+		var retrievedHouse house.House
 
 		for _, house := range houses {
 			if *house.HouseID == id {
@@ -130,7 +124,7 @@ func handleHouse(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		if retrievedHouse == (house{}) {
+		if retrievedHouse == (house.House{}) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
@@ -150,7 +144,7 @@ func handleHouse(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var h house
+		var h house.House
 		err := json.Unmarshal(body,&h)
 
 		if err != nil {
